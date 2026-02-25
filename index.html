@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="319">
+  <meta name="theme-color" content="#1B2A4A">
+  <meta name="description" content="319 — Daily Workout Journal">
+  <title>319 — Daily Workout Journal</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231B2A4A' width='100' height='100' rx='12'/><text x='50' y='62' text-anchor='middle' font-family='Georgia,serif' font-size='36' font-weight='bold' fill='%23E07A5F'>319</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231B2A4A' width='100' height='100'/><text x='50' y='64' text-anchor='middle' font-family='Georgia,serif' font-size='38' font-weight='bold' fill='%23E07A5F'>319</text></svg>">
+  <link rel="manifest" href="data:application/json,{%22name%22:%22319%20Journal%22,%22short_name%22:%22319%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%231B2A4A%22,%22theme_color%22:%22%231B2A4A%22}">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+    :root {
+      --navy: #1B2A4A;
+      --navy-deep: #0F1A2E;
+      --steel: #3D5A80;
+      --steel-light: #4A6D99;
+      --accent: #E07A5F;
+      --accent-glow: #E8947D;
+      --warm: #F4A261;
+      --light: #F0F4F8;
+      --white: #FFFFFF;
+      --gray-light: #F5F5F5;
+      --gray-med: #E0E0E0;
+      --gray-text: #666666;
+      --body-text: #333333;
+      --green: #2E7D32;
+      --green-light: #E8F5E9;
+      --red-light: #FFEBEE;
+      --red: #C62828;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+    html, body { min-height: 100vh; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--light); color: var(--body-text); }
+    input, textarea, button, select { font-family: inherit; }
+    input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+    button { cursor: pointer; border: none; transition: all 0.15s ease; }
+    button:active { transform: scale(0.97); }
+
+    /* ── HEADER ── */
+    .header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+      color: white; padding: 14px 16px; position: sticky; top: 0; z-index: 20;
+      border-bottom: 3px solid var(--accent);
+    }
+    .header-top { display: flex; align-items: center; justify-content: center; gap: 12px; }
+    .header h1 {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 28px; font-weight: 700; letter-spacing: 2px; color: var(--accent);
+    }
+    .header .subtitle {
+      font-size: 10px; color: var(--steel-light); text-align: center;
+      margin-top: 2px; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .header .day-display {
+      font-size: 13px; color: #94a3b8; text-align: center; margin-top: 4px;
+      font-family: 'Source Serif 4', Georgia, serif; font-style: italic;
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex; background: white; position: sticky; top: 73px; z-index: 15;
+      box-shadow: 0 2px 8px rgba(27,42,74,0.08);
+    }
+    .tab {
+      flex: 1; padding: 12px 4px; background: transparent;
+      font-size: 11px; font-weight: 600; color: var(--gray-text);
+      border-bottom: 3px solid transparent; text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .tab.active { border-bottom-color: var(--tab-color); color: var(--tab-color); background: color-mix(in srgb, var(--tab-color) 6%, transparent); }
+
+    /* ── CONTENT ── */
+    .content { padding: 16px; padding-bottom: 110px; max-width: 540px; margin: 0 auto; }
+    .tab-content { animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .hidden { display: none !important; }
+
+    /* ── SECTIONS ── */
+    .section {
+      background: white; border-radius: 14px; padding: 16px; margin-bottom: 14px;
+      box-shadow: 0 1px 6px rgba(27,42,74,0.06);
+      border-left: 4px solid var(--section-color, var(--steel));
+    }
+    .section h3 {
+      font-size: 11px; font-weight: 700; color: var(--section-color, var(--steel));
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+    .label-hint { font-weight: 400; color: var(--gray-text); font-size: 11px; font-style: italic; }
+    .input, .textarea, .select {
+      width: 100%; padding: 11px 12px; border: 1.5px solid var(--gray-med);
+      border-radius: 10px; font-size: 16px; margin-bottom: 12px;
+      background: white; color: var(--body-text); transition: border-color 0.15s;
+    }
+    .input::placeholder, .textarea::placeholder { color: #aaa; }
+    .textarea { resize: vertical; font-family: inherit; min-height: 56px; line-height: 1.5; }
+    .select { background: white; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+    .flex-row { display: flex; gap: 8px; }
+    .flex-row > div { flex: 1; }
+
+    /* ── DAY INPUT ROW ── */
+    .day-input-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .day-input-row .day-num-input {
+      width: 72px; text-align: center; font-size: 22px; font-weight: 700;
+      font-family: 'Source Serif 4', Georgia, serif; color: var(--navy);
+      padding: 8px 4px; border: 2px solid var(--steel); border-radius: 10px;
+    }
+    .day-input-row .day-slash {
+      font-family: 'Source Serif 4', Georgia, serif; font-size: 20px;
+      color: var(--steel); font-weight: 600;
+    }
+
+    /* ── BUTTON GROUPS ── */
+    .btn-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 12px; }
+
+    .choice-btn {
+      padding: 9px 14px; border-radius: 9px; font-weight: 600; font-size: 13px;
+      background: var(--gray-light); color: var(--gray-text); min-width: 40px;
+      transition: all 0.12s ease;
+    }
+    .choice-btn.active { background: var(--steel); color: white; box-shadow: 0 2px 6px rgba(61,90,128,0.3); }
+    .choice-btn.active-accent { background: var(--accent); color: white; box-shadow: 0 2px 6px rgba(224,122,95,0.3); }
+    .choice-btn.active-warm { background: var(--warm); color: white; box-shadow: 0 2px 6px rgba(244,162,97,0.3); }
+    .choice-btn.active-green { background: var(--green); color: white; box-shadow: 0 2px 6px rgba(46,125,50,0.3); }
+    .choice-btn.active-navy { background: var(--navy); color: white; box-shadow: 0 2px 6px rgba(27,42,74,0.3); }
+
+    .yesno-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 12px; }
+    .yes-btn, .no-btn {
+      padding: 10px 24px; border-radius: 10px; font-weight: 700; font-size: 13px;
+      background: var(--gray-light); color: var(--gray-text);
+    }
+    .yes-btn.active { background: var(--green); color: white; }
+    .no-btn.active { background: var(--accent); color: white; }
+
+    .partial-btn {
+      padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 13px;
+      background: var(--gray-light); color: var(--gray-text);
+    }
+    .partial-btn.active { background: var(--warm); color: white; }
+
+    /* ── PAIN FLAG CHIPS ── */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 12px; }
+    .chip {
+      padding: 7px 14px; border-radius: 20px; font-weight: 600; font-size: 12px;
+      background: var(--gray-light); color: var(--gray-text);
+    }
+    .chip.active { background: var(--accent); color: white; }
+    .chip.active-green { background: var(--green); color: white; }
+
+    /* ── HIGHLIGHT BOX ── */
+    .highlight-box {
+      margin-top: 12px; background: #FFF8F5; border: 2px solid var(--accent);
+      border-radius: 12px; padding: 14px;
+    }
+    .highlight-box.steel { background: #F5F8FC; border-color: var(--steel); }
+    .highlight-box.warm { background: #FFFAF5; border-color: var(--warm); }
+
+    /* ── TOGGLE SECTION ── */
+    .toggle-section { margin-bottom: 12px; }
+    .toggle-header {
+      display: flex; align-items: center; gap: 8px; padding: 10px 0;
+      font-weight: 600; font-size: 13px; color: var(--navy); cursor: pointer;
+    }
+    .toggle-header .toggle-icon {
+      font-size: 16px; transition: transform 0.2s;
+      width: 20px; text-align: center;
+    }
+    .toggle-header.open .toggle-icon { transform: rotate(90deg); }
+    .toggle-body { padding-left: 4px; }
+
+    /* ── EXERCISE ENTRY ── */
+    .exercise-entry {
+      background: var(--gray-light); border-radius: 10px; padding: 12px;
+      margin-bottom: 8px; position: relative;
+    }
+    .exercise-entry .remove-btn {
+      position: absolute; top: 8px; right: 8px; width: 24px; height: 24px;
+      border-radius: 12px; background: var(--gray-med); color: var(--gray-text);
+      font-size: 14px; display: flex; align-items: center; justify-content: center;
+    }
+    .exercise-entry .remove-btn:active { background: var(--accent); color: white; }
+    .add-exercise-btn {
+      width: 100%; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 13px;
+      background: color-mix(in srgb, var(--steel) 10%, white);
+      color: var(--steel); border: 1.5px dashed var(--steel);
+      margin-bottom: 12px;
+    }
+    .add-exercise-btn:active { background: color-mix(in srgb, var(--steel) 20%, white); }
+
+    /* ── SPACERS ── */
+    .mt-8 { margin-top: 8px; }
+    .mt-12 { margin-top: 12px; }
+    .mt-16 { margin-top: 16px; }
+    .mb-4 { margin-bottom: 4px; }
+    .mb-8 { margin-bottom: 8px; }
+    .mb-12 { margin-bottom: 12px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      position: fixed; bottom: 0; left: 0; right: 0; background: white;
+      padding: 12px 16px; box-shadow: 0 -2px 12px rgba(27,42,74,0.1); z-index: 20;
+    }
+    .footer-inner { display: flex; gap: 10px; max-width: 540px; margin: 0 auto; }
+    .clear-btn {
+      padding: 14px 18px; border-radius: 12px; font-weight: 600; font-size: 13px;
+      background: var(--gray-light); color: var(--gray-text);
+    }
+    .copy-btn {
+      flex: 1; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 14px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--steel) 100%);
+      color: white; letter-spacing: 0.3px;
+    }
+    .copy-btn.copied { background: var(--green); }
+    .cancel-btn {
+      flex: 1; padding: 14px; border-radius: 12px; font-weight: 600;
+      background: var(--gray-light); color: var(--gray-text);
+    }
+    .confirm-btn {
+      flex: 1; padding: 14px; border-radius: 12px; font-weight: 700;
+      background: var(--accent); color: white;
+    }
+
+    /* ── COUNTER DISPLAY ── */
+    .counter-strip {
+      display: flex; justify-content: center; gap: 16px; margin: 8px 0 4px;
+      font-size: 11px; color: var(--steel-light);
+    }
+    .counter-strip span { opacity: 0.7; }
+    .counter-strip strong { color: var(--accent); opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-top">
+      <h1>319</h1>
+    </div>
+    <div class="subtitle">The Movement Encyclopedia — Daily Journal</div>
+    <div class="day-display" id="header-date"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="workout" style="--tab-color: var(--navy);">🏋️ Workout</button>
+    <button class="tab" data-tab="data" style="--tab-color: var(--steel);">📊 Data</button>
+    <button class="tab" data-tab="session" style="--tab-color: var(--accent);">🔥 Session</button>
+    <button class="tab" data-tab="father" style="--tab-color: var(--warm);">👨‍👧 Father</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══════════════ WORKOUT TAB ═══════════════ -->
+    <div id="workout-tab" class="tab-content">
+
+      <div class="section" style="--section-color: var(--navy);">
+        <h3>Day</h3>
+        <div class="day-input-row">
+          <label class="label mb-4" style="margin-bottom:0; white-space:nowrap;">Day</label>
+          <input type="number" class="input day-num-input" id="w-day-num" min="1" max="319" style="margin-bottom:0;">
+          <span class="day-slash">/ 319</span>
+        </div>
+        <div class="flex-row">
+          <div>
+            <label class="label">Day of Week</label>
+            <select class="select" id="w-dow">
+              <option value="">Select...</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Date</label>
+            <input type="text" class="input" id="w-date">
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="--section-color: var(--steel);">
+        <h3>Warm-Up</h3>
+        <textarea class="textarea" id="w-warmup" placeholder='What you did, or "none"' rows="2"></textarea>
+      </div>
+
+      <div class="section" style="--section-color: var(--navy);">
+        <h3>Exercises</h3>
+        <div id="exercise-list"></div>
+        <button class="add-exercise-btn" id="add-exercise-btn">+ Add Exercise</button>
+        <label class="label">Order / Structure Notes</label>
+        <textarea class="textarea" id="w-order" placeholder="Circuits, supersets, EMOM, as performed..." rows="2"></textarea>
+      </div>
+
+      <div class="section" style="--section-color: var(--steel);">
+        <h3>Session Setup</h3>
+        <label class="label mb-8">Rest Between Sets</label>
+        <div class="btn-row">
+          <button class="choice-btn" data-group="rest" data-val="minimal">Minimal</button>
+          <button class="choice-btn" data-group="rest" data-val="as needed">As Needed</button>
+          <button class="choice-btn" data-group="rest" data-val="30s">30s</button>
+          <button class="choice-btn" data-group="rest" data-val="60s">60s</button>
+          <button class="choice-btn" data-group="rest" data-val="90s">90s</button>
+        </div>
+        <input type="text" class="input" id="w-rest-custom" placeholder="Custom rest notes...">
+
+        <label class="label mb-8">Format</label>
+        <div class="btn-row">
+          <button class="choice-btn" data-group="format" data-val="solo">Solo</button>
+          <button class="choice-btn" data-group="format" data-val="partner">Partner</button>
+          <button class="choice-btn" data-group="format" data-val="class">Class</button>
+          <button class="choice-btn" data-group="format" data-val="other">Other</button>
+        </div>
+
+        <label class="label">Total Time <span class="label-hint">(rough estimate)</span></label>
+        <input type="text" class="input" id="w-total-time" placeholder="e.g., 45 min">
+      </div>
+    </div>
+
+    <!-- ═══════════════ DATA TAB ═══════════════ -->
+    <div id="data-tab" class="tab-content hidden">
+
+      <div class="section" style="--section-color: var(--steel);">
+        <h3>⌚ Apple Watch</h3>
+        <div class="flex-row mb-8">
+          <div>
+            <label class="label">Workout Time</label>
+            <input type="text" class="input" id="d-watch-time" placeholder="e.g., 45:30">
+          </div>
+          <div>
+            <label class="label">Active Cal</label>
+            <input type="number" class="input" id="d-active-cal" placeholder="e.g., 450">
+          </div>
+        </div>
+        <div class="flex-row mb-8">
+          <div>
+            <label class="label">Total Cal</label>
+            <input type="number" class="input" id="d-total-cal" placeholder="e.g., 580">
+          </div>
+          <div>
+            <label class="label">Avg HR</label>
+            <input type="number" class="input" id="d-avg-hr" placeholder="e.g., 134">
+          </div>
+        </div>
+        <div class="flex-row">
+          <div>
+            <label class="label">Peak HR</label>
+            <input type="number" class="input" id="d-peak-hr" placeholder="e.g., 164">
+          </div>
+          <div></div>
+        </div>
+      </div>
+
+      <!-- RUN SECTION (COLLAPSIBLE) -->
+      <div class="section" style="--section-color: var(--accent);">
+        <h3>🏃 Run <span class="label-hint" style="text-transform:none; letter-spacing:0;">(if applicable)</span></h3>
+        <label class="label mb-8">Did you run today?</label>
+        <div class="yesno-row" id="d-ran-today"></div>
+        <div id="run-fields" class="hidden">
+          <div class="flex-row mb-8">
+            <div>
+              <label class="label">Distance (mi)</label>
+              <input type="text" class="input" id="d-run-distance" placeholder="e.g., 2.5">
+            </div>
+            <div>
+              <label class="label">Pace</label>
+              <input type="text" class="input" id="d-run-pace" placeholder="e.g., 9:30/mi">
+            </div>
+          </div>
+          <label class="label mb-8">Pre-Run Activation</label>
+          <div class="btn-row">
+            <button class="yes-btn" data-group="prerun" data-val="yes">✅ Yes</button>
+            <button class="partial-btn" data-group="prerun" data-val="partial">⚠️ Partial</button>
+            <button class="no-btn" data-group="prerun" data-val="no">❌ No</button>
+          </div>
+          <label class="label mb-8 mt-8">Pain Flags</label>
+          <div class="chip-row" id="d-pain-flags">
+            <button class="chip" data-flag="knee">Knee</button>
+            <button class="chip" data-flag="achilles">Achilles</button>
+            <button class="chip" data-flag="arch">Arch</button>
+            <button class="chip" data-flag="hip">Hip</button>
+            <button class="chip" data-flag="none">None ✓</button>
+          </div>
+          <label class="label">Run Notes</label>
+          <textarea class="textarea" id="d-run-notes" placeholder="Anything notable..." rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="section" style="--section-color: var(--navy);">
+        <h3>⚖️ Body</h3>
+        <div class="flex-row mb-8">
+          <div>
+            <label class="label">AM Weight <span class="label-hint">(waking)</span></label>
+            <input type="text" class="input" id="d-am-weight" placeholder="e.g., 214.5">
+          </div>
+          <div>
+            <label class="label">PM Weight <span class="label-hint">(before bed)</span></label>
+            <input type="text" class="input" id="d-pm-weight" placeholder="e.g., 216.2">
+          </div>
+        </div>
+        <label class="label">Physical Feel</label>
+        <input type="text" class="input" id="d-feel" placeholder="sore, tight, strong, off, fresh...">
+      </div>
+
+      <div class="section" style="--section-color: var(--warm);">
+        <h3>🍗 Fuel</h3>
+        <label class="label mb-8">Protein Hit (200g)</label>
+        <div class="yesno-row" id="d-protein"></div>
+        <label class="label mb-8">Fueling Quality</label>
+        <div class="btn-row">
+          <button class="choice-btn" data-group="fuel" data-val="good" style="min-width: 70px;">Good</button>
+          <button class="choice-btn" data-group="fuel" data-val="fair" style="min-width: 70px;">Fair</button>
+          <button class="choice-btn" data-group="fuel" data-val="poor" style="min-width: 70px;">Poor</button>
+        </div>
+        <label class="label">Note <span class="label-hint">(only if notable)</span></label>
+        <input type="text" class="input" id="d-fuel-note" placeholder="bonk, refeed, dialed in...">
+      </div>
+
+      <div class="section" style="--section-color: var(--green);">
+        <h3>🦶 Eccentric Heel Drops</h3>
+        <label class="label mb-8">Before-bed heel drops done?</label>
+        <div class="yesno-row" id="d-heel-drops"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ SESSION TAB ═══════════════ -->
+    <div id="session-tab" class="tab-content hidden">
+
+      <div class="section" style="--section-color: var(--accent);">
+        <h3>Energy & Effort</h3>
+        <textarea class="textarea" id="s-energy" placeholder="Grinding, flowing, flat, electric, easy..." rows="3"></textarea>
+      </div>
+
+      <div class="section" style="--section-color: var(--steel);">
+        <h3>Form</h3>
+        <textarea class="textarea" id="s-form" placeholder="Held or broke down — when, where..." rows="3"></textarea>
+      </div>
+
+      <div class="section" style="--section-color: var(--navy);">
+        <h3>Breath</h3>
+        <textarea class="textarea" id="s-breath" placeholder="Aware of it? Intentional? Fell apart somewhere?" rows="3"></textarea>
+      </div>
+
+      <div class="section" style="--section-color: var(--warm);">
+        <h3>Adapt</h3>
+        <textarea class="textarea" id="s-adapt" placeholder="Anything improvised, reactive, or unplanned..." rows="3"></textarea>
+      </div>
+
+      <div class="highlight-box" style="margin-bottom: 16px;">
+        <label class="label" style="color: var(--accent); font-size: 14px;">🔥 Aliveness</label>
+        <p style="font-size: 11px; color: var(--gray-text); margin-bottom: 8px; font-style: italic;">One line. What was this session beyond the reps?</p>
+        <textarea class="textarea" id="s-aliveness" placeholder="" rows="3" style="border-color: var(--accent); font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 15px;"></textarea>
+      </div>
+    </div>
+
+    <!-- ═══════════════ FATHERHOOD TAB ═══════════════ -->
+    <div id="father-tab" class="tab-content hidden">
+
+      <div class="section" style="--section-color: var(--warm);">
+        <h3>Fatherhood</h3>
+        <p style="font-size: 12px; color: var(--gray-text); margin-bottom: 16px; font-style: italic; line-height: 1.5;">
+          Woven naturally. Not a rigid section. Give it room when it breaks open. A line or two when it doesn't.
+        </p>
+
+        <label class="label">1. What did today teach me about fatherhood?</label>
+        <textarea class="textarea" id="f-teach" rows="4" placeholder=""></textarea>
+
+        <label class="label">2. What did today expose structurally?</label>
+        <textarea class="textarea" id="f-expose" rows="4" placeholder=""></textarea>
+
+        <label class="label">3. Where did I feel alive? Where didn't I?</label>
+        <textarea class="textarea" id="f-alive" rows="4" placeholder=""></textarea>
+      </div>
+
+      <div class="highlight-box warm" style="margin-bottom: 16px; border-color: var(--warm); background: #FFFAF5;">
+        <label class="label" style="color: var(--warm); font-size: 14px;">✨ Golden Nugget</label>
+        <p style="font-size: 11px; color: var(--gray-text); margin-bottom: 8px; font-style: italic;">A felt truth — a line that stops belonging to this session and becomes true about something larger. Don't force it. Recognize it.</p>
+        <textarea class="textarea" id="f-nugget" rows="3" style="border-color: var(--warm); font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 15px;" placeholder=""></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer">
+    <div class="footer-inner" id="footer-buttons">
+      <button class="clear-btn" id="clear-btn">Clear</button>
+      <button class="copy-btn" id="copy-btn">📋 Copy to Clipboard</button>
+    </div>
+    <div class="footer-inner hidden" id="footer-confirm">
+      <button class="cancel-btn" id="cancel-btn">Cancel</button>
+      <button class="confirm-btn" id="confirm-btn">Confirm Clear</button>
+    </div>
+  </div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const state = {
+  activeTab: 'workout',
+  workout: {
+    dayNum: '', dow: '', date: '', warmup: '',
+    exercises: [], order: '',
+    rest: '', restCustom: '', format: '', totalTime: ''
+  },
+  data: {
+    watchTime: '', activeCal: '', totalCal: '', avgHr: '', peakHr: '',
+    ranToday: null, runDistance: '', runPace: '', preRun: '', painFlags: [], runNotes: '',
+    amWeight: '', pmWeight: '', feel: '',
+    protein: null, fuelQuality: '', fuelNote: '',
+    heelDrops: null
+  },
+  session: { energy: '', form: '', breath: '', adapt: '', aliveness: '' },
+  father: { teach: '', expose: '', alive: '', nugget: '' }
+};
+
+// ── Date helpers ──
+function getDateInfo() {
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return { formatted: `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`, dow: days[now.getDay()] };
+}
+
+// ── Calculate day number ──
+function calcDayNum() {
+  const start = new Date(2026, 1, 16); // Feb 16, 2026
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.floor((now - start) / 86400000) + 1;
+  return Math.max(1, Math.min(319, diff));
+}
+
+const dateInfo = getDateInfo();
+if (!state.workout.date) state.workout.date = dateInfo.formatted;
+if (!state.workout.dow) state.workout.dow = dateInfo.dow;
+if (!state.workout.dayNum) state.workout.dayNum = calcDayNum();
+
+// ── LocalStorage ──
+const STORAGE_KEY = 'journal319Draft';
+function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved) {
+      if (saved.activeTab) state.activeTab = saved.activeTab;
+      if (saved.workout) Object.assign(state.workout, saved.workout);
+      if (saved.data) Object.assign(state.data, saved.data);
+      if (saved.session) Object.assign(state.session, saved.session);
+      if (saved.father) Object.assign(state.father, saved.father);
+      // Ensure exercises is always an array
+      if (!Array.isArray(state.workout.exercises)) state.workout.exercises = [];
+    }
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════
+// EXERCISE LIST
+// ═══════════════════════════════════════════════
+function addExercise() {
+  state.workout.exercises.push({ name: '', detail: '' });
+  saveState();
+  renderExercises();
+}
+
+function removeExercise(idx) {
+  state.workout.exercises.splice(idx, 1);
+  saveState();
+  renderExercises();
+}
+
+function renderExercises() {
+  const list = document.getElementById('exercise-list');
+  list.innerHTML = '';
+  state.workout.exercises.forEach((ex, i) => {
+    const div = document.createElement('div');
+    div.className = 'exercise-entry';
+    div.innerHTML = `
+      <button class="remove-btn" data-idx="${i}">×</button>
+      <label class="label mb-4" style="font-size:11px; color:var(--steel);">Exercise ${i + 1}</label>
+      <input type="text" class="input" data-field="name" data-idx="${i}" placeholder="Exercise name" value="${escHtml(ex.name)}" style="margin-bottom:6px; font-weight:600;">
+      <input type="text" class="input" data-field="detail" data-idx="${i}" placeholder="Reps × Sets × Load (e.g., 10×3×50lb)" value="${escHtml(ex.detail)}" style="margin-bottom:0; font-size:14px;">
+    `;
+    list.appendChild(div);
+  });
+
+  // Bind events
+  list.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.onclick = () => removeExercise(parseInt(btn.dataset.idx));
+  });
+  list.querySelectorAll('input[data-field]').forEach(inp => {
+    inp.oninput = () => {
+      const idx = parseInt(inp.dataset.idx);
+      state.workout.exercises[idx][inp.dataset.field] = inp.value;
+      saveState();
+    };
+  });
+}
+
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ═══════════════════════════════════════════════
+// BUTTON GROUP HELPERS
+// ═══════════════════════════════════════════════
+function setupChoiceButtons(group, stateObj, stateKey, activeClass = 'active') {
+  document.querySelectorAll(`.choice-btn[data-group="${group}"]`).forEach(btn => {
+    btn.classList.toggle(activeClass, stateObj[stateKey] === btn.dataset.val);
+    btn.onclick = () => {
+      stateObj[stateKey] = stateObj[stateKey] === btn.dataset.val ? '' : btn.dataset.val;
+      saveState(); renderAll();
+    };
+  });
+}
+
+function setupPreRunButtons() {
+  const vals = { yes: '.yes-btn[data-group="prerun"]', partial: '.partial-btn[data-group="prerun"]', no: '.no-btn[data-group="prerun"]' };
+  Object.entries(vals).forEach(([val, sel]) => {
+    const btn = document.querySelector(sel);
+    if (!btn) return;
+    btn.classList.toggle('active', state.data.preRun === val);
+    btn.onclick = () => { state.data.preRun = state.data.preRun === val ? '' : val; saveState(); renderAll(); };
+  });
+}
+
+function setupYesNo(containerId, stateObj, stateKey) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  const yesBtn = document.createElement('button');
+  yesBtn.className = 'yes-btn' + (stateObj[stateKey] === true ? ' active' : '');
+  yesBtn.textContent = 'Yes';
+  yesBtn.onclick = () => { stateObj[stateKey] = stateObj[stateKey] === true ? null : true; saveState(); renderAll(); };
+  const noBtn = document.createElement('button');
+  noBtn.className = 'no-btn' + (stateObj[stateKey] === false ? ' active' : '');
+  noBtn.textContent = 'No';
+  noBtn.onclick = () => { stateObj[stateKey] = stateObj[stateKey] === false ? null : false; saveState(); renderAll(); };
+  container.appendChild(yesBtn);
+  container.appendChild(noBtn);
+}
+
+function setupPainFlags() {
+  document.querySelectorAll('#d-pain-flags .chip').forEach(chip => {
+    const flag = chip.dataset.flag;
+    const isActive = state.data.painFlags.includes(flag);
+    chip.classList.toggle('active', isActive && flag !== 'none');
+    chip.classList.toggle('active-green', isActive && flag === 'none');
+    chip.onclick = () => {
+      if (flag === 'none') {
+        state.data.painFlags = state.data.painFlags.includes('none') ? [] : ['none'];
+      } else {
+        state.data.painFlags = state.data.painFlags.filter(f => f !== 'none');
+        if (state.data.painFlags.includes(flag)) {
+          state.data.painFlags = state.data.painFlags.filter(f => f !== flag);
+        } else {
+          state.data.painFlags.push(flag);
+        }
+      }
+      saveState(); renderAll();
+    };
+  });
+}
+
+// ═══════════════════════════════════════════════
+// BIND INPUTS
+// ═══════════════════════════════════════════════
+function bindInput(id, obj, key) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = obj[key] || '';
+  el.oninput = () => { obj[key] = el.value; saveState(); };
+}
+function bindSelect(id, obj, key) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = obj[key] || '';
+  el.onchange = () => { obj[key] = el.value; saveState(); };
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function renderAll() {
+  // Tabs
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === state.activeTab));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('hidden', c.id !== state.activeTab + '-tab'));
+
+  // Header
+  const dayNum = state.workout.dayNum || '?';
+  const remaining = 319 - (parseInt(dayNum) || 0);
+  document.getElementById('header-date').textContent = `Day ${dayNum} / 319 — ${state.workout.date || dateInfo.formatted} — ${remaining > 0 ? remaining + ' to go' : 'Complete'}`;
+
+  // Workout tab
+  bindInput('w-day-num', state.workout, 'dayNum');
+  bindSelect('w-dow', state.workout, 'dow');
+  bindInput('w-date', state.workout, 'date');
+  bindInput('w-warmup', state.workout, 'warmup');
+  bindInput('w-order', state.workout, 'order');
+  bindInput('w-rest-custom', state.workout, 'restCustom');
+  bindInput('w-total-time', state.workout, 'totalTime');
+  renderExercises();
+  setupChoiceButtons('rest', state.workout, 'rest', 'active');
+  setupChoiceButtons('format', state.workout, 'format', 'active');
+
+  // Data tab
+  bindInput('d-watch-time', state.data, 'watchTime');
+  bindInput('d-active-cal', state.data, 'activeCal');
+  bindInput('d-total-cal', state.data, 'totalCal');
+  bindInput('d-avg-hr', state.data, 'avgHr');
+  bindInput('d-peak-hr', state.data, 'peakHr');
+  setupYesNo('d-ran-today', state.data, 'ranToday');
+  document.getElementById('run-fields').classList.toggle('hidden', state.data.ranToday !== true);
+  bindInput('d-run-distance', state.data, 'runDistance');
+  bindInput('d-run-pace', state.data, 'runPace');
+  setupPreRunButtons();
+  setupPainFlags();
+  bindInput('d-run-notes', state.data, 'runNotes');
+  bindInput('d-am-weight', state.data, 'amWeight');
+  bindInput('d-pm-weight', state.data, 'pmWeight');
+  bindInput('d-feel', state.data, 'feel');
+  setupYesNo('d-protein', state.data, 'protein');
+
+  // Fuel quality buttons - custom active classes
+  document.querySelectorAll('.choice-btn[data-group="fuel"]').forEach(btn => {
+    const val = btn.dataset.val;
+    const isActive = state.data.fuelQuality === val;
+    btn.classList.remove('active', 'active-green', 'active-warm', 'active-accent');
+    if (isActive) {
+      if (val === 'good') btn.classList.add('active-green');
+      else if (val === 'fair') btn.classList.add('active-warm');
+      else if (val === 'poor') btn.classList.add('active-accent');
+    }
+    btn.onclick = () => { state.data.fuelQuality = state.data.fuelQuality === val ? '' : val; saveState(); renderAll(); };
+  });
+
+  bindInput('d-fuel-note', state.data, 'fuelNote');
+  setupYesNo('d-heel-drops', state.data, 'heelDrops');
+
+  // Session tab
+  bindInput('s-energy', state.session, 'energy');
+  bindInput('s-form', state.session, 'form');
+  bindInput('s-breath', state.session, 'breath');
+  bindInput('s-adapt', state.session, 'adapt');
+  bindInput('s-aliveness', state.session, 'aliveness');
+
+  // Father tab
+  bindInput('f-teach', state.father, 'teach');
+  bindInput('f-expose', state.father, 'expose');
+  bindInput('f-alive', state.father, 'alive');
+  bindInput('f-nugget', state.father, 'nugget');
+}
+
+// ═══════════════════════════════════════════════
+// GENERATE OUTPUT
+// ═══════════════════════════════════════════════
+function generateOutput() {
+  const w = state.workout;
+  const d = state.data;
+  const s = state.session;
+  const f = state.father;
+
+  let o = `[Day ${w.dayNum || '?'}]/319 - ${w.dow || '?'} - ${w.date || '?'}\n\n`;
+
+  // Workout
+  o += `Workout:\n`;
+  o += `• Warm-up: ${w.warmup || 'none'}\n`;
+  o += `• Exercises:\n`;
+  if (w.exercises.length > 0) {
+    w.exercises.forEach((ex, i) => {
+      if (ex.name) o += `  ${i+1}. ${ex.name}${ex.detail ? ' — ' + ex.detail : ''}\n`;
+    });
+  } else {
+    o += `  (none entered)\n`;
+  }
+  if (w.order) o += `• Order: ${w.order}\n`;
+  o += `• Rest: ${w.rest || ''}${w.restCustom ? (w.rest ? ' — ' : '') + w.restCustom : ''}\n`;
+  o += `• Format: ${w.format || '(not selected)'}\n`;
+  o += `• Total time: ${w.totalTime || '(not entered)'}\n`;
+
+  // Watch
+  o += `\nWatch:\n`;
+  o += `• Workout time: ${d.watchTime || '—'}\n`;
+  o += `• Active cal: ${d.activeCal || '—'} / Total cal: ${d.totalCal || '—'}\n`;
+  o += `• Avg HR: ${d.avgHr || '—'} / Peak HR: ${d.peakHr || '—'}\n`;
+
+  // Run
+  if (d.ranToday === true) {
+    o += `\nRun:\n`;
+    o += `• Distance: ${d.runDistance || '—'}\n`;
+    o += `• Pace: ${d.runPace || '—'}\n`;
+    o += `• Pre-run activation: ${d.preRun || '(not selected)'}\n`;
+    o += `• Pain flags: ${d.painFlags.length > 0 ? d.painFlags.join(', ') : 'none'}\n`;
+    if (d.runNotes) o += `• Notes: ${d.runNotes}\n`;
+  } else if (d.ranToday === false) {
+    o += `\nRun: No run today\n`;
+  }
+
+  // Body
+  o += `\nBody:\n`;
+  o += `• AM weight: ${d.amWeight || '—'}\n`;
+  o += `• PM weight: ${d.pmWeight || '—'}\n`;
+  if (d.feel) o += `• Feel: ${d.feel}\n`;
+
+  // Fuel
+  o += `\nFuel:\n`;
+  o += `• Protein (200g): ${d.protein === true ? 'yes' : d.protein === false ? 'no' : '(not answered)'}\n`;
+  o += `• Fueling quality: ${d.fuelQuality || '(not selected)'}\n`;
+  if (d.fuelNote) o += `• Note: ${d.fuelNote}\n`;
+
+  // Heel drops
+  o += `\nHeel drops: ${d.heelDrops === true ? 'yes' : d.heelDrops === false ? 'no' : '(not answered)'}\n`;
+
+  // Session
+  o += `\nSession:\n`;
+  o += `• Energy/effort: ${s.energy || '(not entered)'}\n`;
+  o += `• Form: ${s.form || '(not entered)'}\n`;
+  o += `• Breath: ${s.breath || '(not entered)'}\n`;
+  if (s.adapt) o += `• Adapt: ${s.adapt}\n`;
+
+  // Aliveness
+  o += `\nAliveness: ${s.aliveness || '(not entered)'}\n`;
+
+  // Fatherhood
+  o += `\nFatherhood:\n`;
+  o += `1. What did today teach me about fatherhood? ${f.teach || '(not entered)'}\n`;
+  o += `2. What did today expose structurally? ${f.expose || '(not entered)'}\n`;
+  o += `3. Where did I feel alive? Where didn't I? ${f.alive || '(not entered)'}\n`;
+
+  // Golden Nugget
+  if (f.nugget) o += `\nGolden Nugget: "${f.nugget}"\n`;
+
+  return o;
+}
+
+// ═══════════════════════════════════════════════
+// CLEAR
+// ═══════════════════════════════════════════════
+function clearAll() {
+  const fresh = getDateInfo();
+  state.workout = { dayNum: calcDayNum(), dow: fresh.dow, date: fresh.formatted, warmup: '', exercises: [], order: '', rest: '', restCustom: '', format: '', totalTime: '' };
+  state.data = { watchTime: '', activeCal: '', totalCal: '', avgHr: '', peakHr: '', ranToday: null, runDistance: '', runPace: '', preRun: '', painFlags: [], runNotes: '', amWeight: '', pmWeight: '', feel: '', protein: null, fuelQuality: '', fuelNote: '', heelDrops: null };
+  state.session = { energy: '', form: '', breath: '', adapt: '', aliveness: '' };
+  state.father = { teach: '', expose: '', alive: '', nugget: '' };
+  saveState(); renderAll();
+}
+
+// ═══════════════════════════════════════════════
+// EVENT LISTENERS
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => { state.activeTab = tab.dataset.tab; saveState(); renderAll(); };
+});
+
+document.getElementById('add-exercise-btn').onclick = addExercise;
+
+let showConfirm = false;
+document.getElementById('clear-btn').onclick = () => {
+  document.getElementById('footer-buttons').classList.add('hidden');
+  document.getElementById('footer-confirm').classList.remove('hidden');
+};
+document.getElementById('cancel-btn').onclick = () => {
+  document.getElementById('footer-buttons').classList.remove('hidden');
+  document.getElementById('footer-confirm').classList.add('hidden');
+};
+document.getElementById('confirm-btn').onclick = () => {
+  clearAll();
+  document.getElementById('footer-buttons').classList.remove('hidden');
+  document.getElementById('footer-confirm').classList.add('hidden');
+};
+
+document.getElementById('copy-btn').onclick = () => {
+  const output = generateOutput();
+  navigator.clipboard.writeText(output).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy to Clipboard'; btn.classList.remove('copied'); }, 2000);
+  });
+};
+
+// Day number input — update header live
+document.getElementById('w-day-num').addEventListener('input', function() {
+  state.workout.dayNum = this.value;
+  saveState();
+  const dayNum = state.workout.dayNum || '?';
+  const remaining = 319 - (parseInt(dayNum) || 0);
+  document.getElementById('header-date').textContent = `Day ${dayNum} / 319 — ${state.workout.date || dateInfo.formatted} — ${remaining > 0 ? remaining + ' to go' : 'Complete'}`;
+});
+
+// ═══════════════════════════════════════════════
+// SERVICE WORKER
+// ═══════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE_NAME = 'journal319-v1';
+    self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))); self.skipWaiting(); });
+    self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+    self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => { const c = res.clone(); caches.open(CACHE_NAME).then(cache => cache.put(e.request, c)); return res; }))); });
+  `;
+  const blob = new Blob([swCode], { type: 'application/javascript' });
+  navigator.serviceWorker.register(URL.createObjectURL(blob), { scope: '/' }).catch(() => {});
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadState();
+renderAll();
+</script>
+</body>
+</html>
